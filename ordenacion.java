@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
-public class ordenacion {
 
+public class ordenacion {
     // Función para intercambiar dos elementos en un arreglo
     public static void intercambiar(int[] a, int i, int j) {
         int aux = a[i];
