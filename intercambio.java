@@ -1,4 +1,4 @@
-public class App {
+public class intercambio {
 
     public static void intercambiar(int []a, int i, int j){
         int aux = a[i];
