@@ -5,7 +5,7 @@ Las consultas han de poder realizarse por nombre y por número de teléfono*/
 import java.io.*;
 import java.util.Arrays;
 
-public class Ejercicio64 {
+public class problema64 {
     public static void main(String[] args) {
         
     }
