@@ -71,6 +71,6 @@ public class problema610{
 
         //Imprimir los tiempos de ordenacion
         System.out.println("Tiempo de ordenacion de Binsort: " + (tiempoFinal - tiempoInicial) + " milisegundos");
-        System.out.println("Tiempo de ordenacion por Radixsort" + (tiempoFinal2 - tiempoInicial2) + "milisegundos");
+        System.out.println("Tiempo de ordenacion por Radixsort: " + (tiempoFinal2 - tiempoInicial2) + " milisegundos");
     }
 }
