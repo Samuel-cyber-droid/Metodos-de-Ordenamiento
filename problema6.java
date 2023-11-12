@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 public class problema6 {
 
+    //Metodo Seleccion
     public static void ordenarSeleccion(int[] lista) {
         for (int i = 0; i < lista.length - 1; i++) {
             int min = i;
