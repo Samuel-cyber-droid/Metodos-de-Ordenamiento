@@ -9,19 +9,19 @@ public class shell {
         for (int gap = n/2; gap > 0; gap /= 2) {
             // Hacer una pasada de gap
             for (int i = gap; i < n; i += 1) {
-                // Aquí, array[i] es el elemento actual. Guardamos este valor en temp
-                // para poder mover los elementos que son mayores que temp a una posición adelante
+                /*Aquí, array[i] es el elemento actual. Guardamos este valor en temp
+                para poder mover los elementos que son mayores que temp a una posición adelante*/
                 int temp = array[i];
 
-                // Cambia los elementos anteriores mayores que temp a una posición adelante
-                // de su posición actual
+                /*Cambia los elementos anteriores mayores que temp a una posición adelante
+                de su posición actual*/
                 int j;
                 for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
                     array[j] = array[j - gap];
                 }
 
-                // Después de mover los elementos mayores que temp a una posición adelante,
-                // colocamos temp (el elemento original array[i]) en su posición correcta
+                /* Después de mover los elementos mayores que temp a una posición adelante,
+                colocamos temp (el elemento original array[i]) en su posición correcta*/
                 array[j] = temp;
             }
         }
