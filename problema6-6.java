@@ -4,3 +4,4 @@ de Esclavo debe moverse también; es decir, cualquier cosa que se haga a Maestro
 debe hacerse a Esclavo[i]. Después de realizar la ordenación, se imprimen de nuevo
 los vectores. Escribir un programa que realice esta tarea.
 Nota: utilizar como algoritmo de ordenación el método Quicksort*/
+
