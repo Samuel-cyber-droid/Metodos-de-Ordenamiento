@@ -7,134 +7,85 @@ La información debe ser ordenada por ventas de mayor a menor y visualizada de n
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
-public class problema67 {
+class Empleado {
+    String nombre;
+    double ventas;
+    int antiguedad;
 
-    //Metodo para leer datos
-    public static Compania[] leerDatosDesdeArchivo(String nombreArchivo) {
-        //Lista para almacenar la informacion
-        Compania[] companias = null;
-
-        try (BufferedReader br = new BufferedReader(new FileReader("datos_compañias.txt"))){
-            String linea;
-            int contador = 0;
-
-            //Contar el numero de lineas
-            while (br.readLine() != null) {
-                contador++;
-            }
-
-            //Inicializar el arreglo de compañias
-            companias = new Compania[contador];
-
-            //Volver a leer el archivo para almacenar la informacion en el array
-            br.close();
-            //br = new BufferedReader(new FileReader("compañias.txt"));
-
-            for (int i = 0; i < contador; i++) {
-                linea = br.readLine();
-                String[] partes = linea.split(",");
-                String nombre = partes[0].trim();
-                double  ventas = Double.parseDouble(partes[1].trim());
-                int antigedad = Integer.parseInt(partes[2].trim());
-                companias[i] = new Compania(nombre, ventas, antigedad);
-            } 
-        } catch (IOException e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
-        return companias;
-    }
-
-    //Metodo para quicksort
-    public static void quicksortPorVentas(Compania[] companias, int inicio, int fin) {
-        if (inicio < fin) {
-            int indiceParticion = particionPorVentas(companias, inicio, fin);
-
-            quicksortPorVentas(companias, inicio, indiceParticion - 1);
-            quicksortPorVentas(companias, indiceParticion + 1, fin);
-        }
-    }
-
-    //Metodo para particionar
-    public static int particionPorVentas(Compania[] companias, int inicio, int fin) {
-        double pivote = companias[fin].getVentas();
-        int i = inicio - 1;
-
-        for (int j = inicio; j < fin; j++) {
-            if (companias[j].getVentas() >= pivote) {
-                i++;
-                intercambiar(companias, i, j);
-            }
-        }
-        intercambiar(companias, i + 1, fin);
-
-        return i + 1;
-    }
-
-    //Metrodo para intercambiar
-    public static void intercambiar(Compania[] companias, int i, int j) {
-        Compania temp = companias[i];
-        companias[i] = companias[j];
-        companias[j] = temp;
-    }
-
-    //Metodo para imprimir la informacion
-    public static void imprimirInformacion(Compania[] companias) {
-        for (Compania compania : companias) {
-            System.out.println(compania);
-        }
-    }
-
-    public static void main(String[] args) {
-        //Nombre del archivo
-        String nombreArchivo = "datos_compañias.txt";
-
-        //Leer el archivo
-        Compania[] companias = leerDatosDesdeArchivo(nombreArchivo);
-
-        //Imprimir los datos
-        System.out.println("Informacion Original: ");
-        imprimirInformacion(companias);
-
-        //Ordenar los datos
-        quicksortPorVentas(companias, 0, companias.length - 1);
-
-        //Imprimir las informacion ordenada
-        System.out.println("\nInformacion Ordenada por ventas de mayor a menor: ");
-        imprimirInformacion(companias);
-    }
-}
-
-class Compania {
-    private String nombre;
-    private double ventas;
-    private int antigedad;
-
-    public Compania(String nombre, double ventas, int antigedad) {
+    public Empleado(String nombre, double ventas, int antiguedad) {
         this.nombre = nombre;
         this.ventas = ventas;
-        this.antigedad = antigedad;
+        this.antiguedad = antiguedad;
     }
 
     public String getNombre() {
         return nombre;
     }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
     public double getVentas() {
         return ventas;
     }
 
-    public int getAntigedad() {
-        return antigedad;
+    public void setVentas(double ventas) {
+        this.ventas = ventas;
     }
-    
+
+    public int getAntiguedad() {
+        return antiguedad;
+    }
+
+    public void setAntiguedad(int antiguedad) {
+        this.antiguedad = antiguedad;
+    }
+
     @Override
     public String toString() {
-        return "Compañia{"+
-                "nombre='" + nombre + '\'' +
-                ", ventas=" + ventas +
-                ", antigedad=" + antigedad +
-                '}';
+        return "Nombre: " + nombre + ", Ventas: " + ventas + ", Antigüedad: " + antiguedad + " años";
+    }
+}
+
+public class problema67 {
+
+    public static void main(String[] args) {
+        List<Empleado> empleados = leerDatos("datos_companias.txt");
+
+        // Ordenar la lista por ventas de mayor a menor
+        Collections.sort(empleados, Comparator.comparingDouble(Empleado::getVentas).reversed());;
+
+        // Mostrar la información ordenada
+        System.out.println("Información ordenada por ventas de mayor a menor:");
+        for (Empleado empleado : empleados) {
+            System.out.println(empleado);
+        }
+    }
+
+    private static List<Empleado> leerDatos(String archivo) {
+        List<Empleado> empleados = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 3) {
+                    String nombre = partes[0].trim();
+                    double ventas = Double.parseDouble(partes[1].trim());
+                    int antiguedad = Integer.parseInt(partes[2].trim());
+                    empleados.add(new Empleado(nombre, ventas, antiguedad));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return empleados;
     }
 }
