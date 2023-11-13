@@ -2,70 +2,87 @@
 nombres y números de teléfono de un archivo que contenga los números en orden aleatorio. 
 Las consultas han de poder realizarse por nombre y por número de teléfono*/
 
-import java.io.*;
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class problema64 {
-    public static void main(String[] args) throws IOException {
-        //Leer los datos del archivo
-        File file = new File("datos.txt");
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String[] datos = new String[1000];
-            for (int i = 0; i < datos.length; i++) {
-                datos[i] = reader.readLine();
-            }
 
-            // Ordenar los datos por nombre
-            Arrays.sort(datos, (a, b) -> a.split(",")[0].compareTo(b.split(",")[0]));
+    public static void main(String[] args) {
+        // Cargar datos desde el archivo
+        Map<String, String> telefonos = cargarDatos("datos.txt");
 
-            //Bucle de consulta
-            while (true) {
-                //Solicitar el tipo de consulta
-                System.out.println("¿Que tipo de consulta desea realizar?");
-                System.out.println("1. Por nombre");
-                System.out.println("2. Por número de teléfono");
-                int tipoConsulta = Integer.parseInt(System.console().readLine());
+        // Realizar consultas
+        realizarConsultas(telefonos);
+    }
 
-                //Realizar la consulta
-                switch (tipoConsulta) {
-                    case 1:
-                        //Solicitar el nombre
-                        System.out.println("Ingrese el nombre");
-                        String nombre = System.console().readLine();
+    private static Map<String, String> cargarDatos(String archivo) {
+        Map<String, String> telefonos = new HashMap<>();
 
-                        //Buscar el nombre en el archivo
-                        int posicion = Arrays.binarySearch(datos, nombre + ",");
-
-                        //Mostrar el numero de telefono si se encuentra
-                        if (posicion > 0) {
-                            System.out.println("EL numero de telefono de: " + nombre + " es " + datos[posicion].split(",")[1]);
-                        } else {
-                            System.out.println("El nombre no se encuentra en la lista");
-                        }
-                        break;
-                
-                    case 2:
-                        //Solicitar el numero de telefono
-                        System.out.println("Ingrese el numero de telefono: ");
-                        String numeroTelefono = System.console().readLine();
-
-                        //Buscar el numero de telefono en el archivo
-                        int posicion2 = Arrays.binarySearch(datos, numeroTelefono + ",");
-
-                        //Mostrar el nombre si se encuentra
-                        if (posicion2 >= 0) {
-                            System.out.println("El nombre de " + datos[posicion2].split(",")[0] + " es " + datos[posicion2].split(",")[1]);
-                        } else {
-                            System.out.println("El numero de telefono no se encuentra en la lista");
-                        }
-                        break;
-                    default:
-                        System.out.println("Opcion no valida");
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 2) {
+                    String nombre = partes[0].trim();
+                    String numero = partes[1].trim();
+                    telefonos.put(nombre, numero);
                 }
             }
-        } catch (NumberFormatException e) {
-            // TODO Auto-generated catch block
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        return telefonos;
+    }
+
+    private static void realizarConsultas(Map<String, String> telefonos) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("1. Consultar por nombre");
+            System.out.println("2. Consultar por número de teléfono");
+            System.out.println("3. Salir");
+            System.out.print("Seleccione una opción: ");
+
+            int opcion = scanner.nextInt();
+            scanner.nextLine(); // Consumir el salto de línea
+
+            switch (opcion) {
+                case 1:
+                    System.out.print("Ingrese el nombre a buscar: ");
+                    String nombreConsulta = scanner.nextLine();
+                    if (telefonos.containsKey(nombreConsulta)) {
+                        System.out.println("Número de teléfono: " + telefonos.get(nombreConsulta));
+                    } else {
+                        System.out.println("Nombre no encontrado.");
+                    }
+                    break;
+                case 2:
+                    System.out.print("Ingrese el número de teléfono a buscar: ");
+                    String numeroConsulta = scanner.nextLine();
+                    if (telefonos.containsValue(numeroConsulta)) {
+                        for (Map.Entry<String, String> entry : telefonos.entrySet()) {
+                            if (entry.getValue().equals(numeroConsulta)) {
+                                System.out.println("Nombre asociado: " + entry.getKey());
+                                break;
+                            }
+                        }
+                    } else {
+                        System.out.println("Número de teléfono no encontrado.");
+                    }
+                    break;
+                case 3:
+                    System.out.println("Saliendo del programa. ¡Hasta luego!");
+                    scanner.close();
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Opción no válida. Por favor, seleccione una opción válida.");
+            }
         }
     }
 }
