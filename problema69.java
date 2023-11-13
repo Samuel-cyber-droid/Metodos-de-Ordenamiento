@@ -6,121 +6,106 @@ Nota. El método a utilizar para ordenar será el de Radixsort.*/
 
 import java.util.Arrays;
 
-public class problema69 {
+class Contrato {
     int dia;
     int mes;
-    int año;
-    int numeroContrato;
+    int anio;
+    String numeroContrato;
 
-    // Constructor y otros métodos de la clase Contrato
-
-    public problema69(int i, int j, int k, int l) {
+    public Contrato(int dia, int mes, int anio, String numeroContrato) {
+        this.dia = dia;
+        this.mes = mes;
+        this.anio = anio;
+        this.numeroContrato = numeroContrato;
     }
 
-    // Método para imprimir los datos del contrato (puedes personalizar según tus necesidades)
-    public void imprimirContrato() {
-        System.out.println("Contrato #" + numeroContrato + " - Fecha: " + dia + "/" + mes + "/" + año);
+    @Override
+    public String toString() {
+        return "Contrato{" +
+                "dia=" + dia +
+                ", mes=" + mes +
+                ", anio=" + anio +
+                ", numeroContrato='" + numeroContrato + '\'' +
+                '}';
     }
 }
 
-class RadixSortContratos {
-
-    // Función para obtener el dígito en la posición especificada
-    private static int obtenerDigito(int numero, int posicion) {
-        return (numero / posicion) % 10;
-    }
-
-    // Método principal para ordenar los contratos por fechas usando Radixsort
-    public static void radixSortContratos(problema69[] contratos) {
-        // Encontrar el contrato con la fecha máxima para determinar el número de dígitos
-        int maxFecha = Arrays.stream(contratos)
-                             .mapToInt(c -> c.año * 10000 + c.mes * 100 + c.dia)
-                             .max()
-                             .orElse(0);
-
-        // Aplicar Radixsort para cada dígito (de las unidades a las decenas de miles)
-        for (int posicion = 1; maxFecha / posicion > 0; posicion *= 10) {
-            contarYSumarDígitos(contratos, posicion);
-            aplicarConteoYSuma(contratos, posicion);
-        }
-    }
-
-    // Método auxiliar para contar y sumar los dígitos en la posición especificada
-    private static void contarYSumarDígitos(problema69[] contratos, int posicion) {
-        int n = contratos.length;
-        problema69[] salida = new problema69[n];
-        int[] conteo = new int[10];
-
-        // Contar la frecuencia de cada dígito en la posición actual
-        for (problema69 contrato : contratos) {
-            int digito = obtenerDigito(contrato.año * 10000 + contrato.mes * 100 + contrato.dia, posicion);
-            conteo[digito]++;
-        }
-
-        // Sumar el conteo acumulado
-        for (int i = 1; i < 10; i++) {
-            conteo[i] += conteo[i - 1];
-        }
-
-        // Construir la matriz de salida
-        for (int i = n - 1; i >= 0; i--) {
-            int digito = obtenerDigito(contratos[i].año * 10000 + contratos[i].mes * 100 + contratos[i].dia, posicion);
-            salida[conteo[digito] - 1] = contratos[i];
-            conteo[digito]--;
-        }
-
-        // Copiar la matriz de salida al arreglo original
-        System.arraycopy(salida, 0, contratos, 0, n);
-    }
-
-    // Método auxiliar para aplicar el conteo y la suma a los contratos
-    private static void aplicarConteoYSuma(problema69[] contratos, int posicion) {
-        int n = contratos.length;
-        problema69[] salida = new problema69[n];
-        int[] conteo = new int[10];
-
-        // Contar la frecuencia de cada dígito en la posición actual
-        for (problema69 contrato : contratos) {
-            int digito = obtenerDigito(contrato.año * 10000 + contrato.mes * 100 + contrato.dia, posicion);
-            conteo[digito]++;
-        }
-
-        // Sumar el conteo acumulado
-        for (int i = 1; i < 10; i++) {
-            conteo[i] += conteo[i - 1];
-        }
-
-        // Construir la matriz de salida (en orden inverso)
-        for (int i = n - 1; i >= 0; i--) {
-            int digito = obtenerDigito(contratos[i].año * 10000 + contratos[i].mes * 100 + contratos[i].dia, posicion);
-            salida[conteo[digito] - 1] = contratos[i];
-            conteo[digito]--;
-        }
-
-        // Copiar la matriz de salida al arreglo original
-        System.arraycopy(salida, 0, contratos, 0, n);
-    }
-
+public class problema69 {
     public static void main(String[] args) {
         // Ejemplo de uso
-        problema69[] contratos = {
-                new problema69(1, 1, 2023, 101),
-                new problema69(15, 6, 2022, 102),
-                new problema69(5, 3, 2023, 103),
-                // ... más contratos ...
+        Contrato[] contratos = {
+                new Contrato(10, 5, 2022, "C001"),
+                new Contrato(15, 3, 2021, "C002"),
+                new Contrato(5, 7, 2022, "C003"),
+                // Agrega más contratos según sea necesario
         };
 
         System.out.println("Contratos sin ordenar:");
-        for (problema69 contrato : contratos) {
-            contrato.imprimirContrato();
+        imprimirContratos(contratos);
+
+        // Ordenar por fechas de mayor a menor usando Radixsort
+        ordenarContratosPorFecha(contratos);
+
+        System.out.println("\nContratos ordenados por fecha (de mayor a menor):");
+        imprimirContratos(contratos);
+    }
+
+    // Método para ordenar contratos por fechas usando Radixsort
+    private static void ordenarContratosPorFecha(Contrato[] contratos) {
+        int n = contratos.length;
+        Contrato[] output = new Contrato[n];
+
+        // Obtener la fecha máxima para saber cuántos dígitos hay
+        int maxFecha = obtenerMaximaFecha(contratos);
+
+        // Aplicar el algoritmo Radixsort para cada posición de los dígitos de la fecha
+        for (int exp = 1; maxFecha / exp > 0; exp *= 10) {
+            countingSortPorFecha(contratos, n, exp, output);
+            // Copiar el arreglo ordenado de vuelta a contratos
+            System.arraycopy(output, 0, contratos, 0, n);
+        }
+    }
+
+    // Método auxiliar para obtener la máxima fecha en el arreglo de contratos
+    private static int obtenerMaximaFecha(Contrato[] contratos) {
+        int maxFecha = Integer.MIN_VALUE;
+        for (Contrato contrato : contratos) {
+            int fecha = contrato.anio * 10000 + contrato.mes * 100 + contrato.dia;
+            if (fecha > maxFecha) {
+                maxFecha = fecha;
+            }
+        }
+        return maxFecha;
+    }
+
+    // Método auxiliar para realizar el Counting Sort por la posición de los dígitos de la fecha
+    private static void countingSortPorFecha(Contrato[] contratos, int n, int exp, Contrato[] output) {
+        int[] count = new int[10];
+        Arrays.fill(count, 0);
+
+        // Contar la frecuencia de los dígitos en la posición actual
+        for (int i = 0; i < n; i++) {
+            int index = (contratos[i].anio * 10000 + contratos[i].mes * 100 + contratos[i].dia) / exp % 10;
+            count[index]++;
         }
 
-        // Ordenar los contratos por fechas usando Radixsort
-        radixSortContratos(contratos);
+        // Calcular las posiciones actuales de los dígitos
+        for (int i = 1; i < 10; i++) {
+            count[i] += count[i - 1];
+        }
 
-        System.out.println("\nContratos ordenados por fechas (de mayor a menor):");
-        for (problema69 contrato : contratos) {
-            contrato.imprimirContrato();
+        // Construir el arreglo de salida
+        for (int i = n - 1; i >= 0; i--) {
+            int index = (contratos[i].anio * 10000 + contratos[i].mes * 100 + contratos[i].dia) / exp % 10;
+            output[count[index] - 1] = contratos[i];
+            count[index]--;
+        }
+    }
+
+    // Método auxiliar para imprimir el arreglo de contratos
+    private static void imprimirContratos(Contrato[] contratos) {
+        for (Contrato contrato : contratos) {
+            System.out.println(contrato);
         }
     }
 }
