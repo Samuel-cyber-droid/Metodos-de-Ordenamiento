@@ -12,37 +12,78 @@ t1.	 Tiempo empleado en ordenar la lista por cada uno de los métodos.
 t2.	Tiempo que se emplearía en ordenar la lista ya ordenada.
 t3.	 Tiempo empleado en ordenar la lista ordenada en orden inverso.*/
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Arrays;
 
 public class problema68 {
+    public static void main(String[] args) {
+        // a) Generar lista de números aleatorios
+        double[] lista = generarLista();
+        System.out.println("Lista generada: " + Arrays.toString(lista));
 
-    //Metodo para generar lista de numeros reales aleatorios
-    public static double[] generarLista() {
+        // b) Medir el tiempo empleado en ordenar por el método de la burbuja
+        long startTimeBurbuja = System.currentTimeMillis();
+        ordenarBurbuja(lista.clone());
+        long endTimeBurbuja = System.currentTimeMillis();
+        long tiempoBurbuja = endTimeBurbuja - startTimeBurbuja;
+        System.out.println("Tiempo empleado en ordenar por el método de la burbuja: " + tiempoBurbuja + " milisegundos");
+
+        // c) Medir el tiempo empleado en ordenar por el método Shell
+        long startTimeShell = System.currentTimeMillis();
+        ordenarShell(lista.clone());
+        long endTimeShell = System.currentTimeMillis();
+        long tiempoShell = endTimeShell - startTimeShell;
+        System.out.println("Tiempo empleado en ordenar por el método Shell: " + tiempoShell + " milisegundos");
+
+        // d) Medir el tiempo empleado en ordenar por el método Radixsort
+        long startTimeRadixSort = System.currentTimeMillis();
+        ordenarRadixSort(lista.clone());
+        long endTimeRadixSort = System.currentTimeMillis();
+        long tiempoRadixSort = endTimeRadixSort - startTimeRadixSort;
+        System.out.println("Tiempo empleado en ordenar por el método Radixsort: " + tiempoRadixSort + " milisegundos");
+
+        // e) Medir el tiempo que se emplearía en ordenar la lista ya ordenada
+        Arrays.sort(lista);
+        long startTimeOrdenada = System.currentTimeMillis();
+        Arrays.sort(lista);
+        long endTimeOrdenada = System.currentTimeMillis();
+        long tiempoOrdenada = endTimeOrdenada - startTimeOrdenada;
+        System.out.println("Tiempo empleado en ordenar la lista ya ordenada: " + tiempoOrdenada + " milisegundos");
+
+        // f) Medir el tiempo empleado en ordenar la lista ordenada en orden inverso
+        Arrays.sort(lista);
+        double[] listaInversa = new double[lista.length];
+        for (int i = 0, j = lista.length - 1; i < lista.length; i++, j--) {
+            listaInversa[i] = lista[j];
+        }
+        long startTimeInversa = System.currentTimeMillis();
+        Arrays.sort(listaInversa);
+        long endTimeInversa = System.currentTimeMillis();
+        long tiempoInversa = endTimeInversa - startTimeInversa;
+        System.out.println("Tiempo empleado en ordenar la lista ordenada en orden inverso: " + tiempoInversa + " milisegundos");
+
+        // g) Buscar un número x en la lista utilizando búsqueda binaria y medir el tiempo
+        buscarNumero(lista.clone());
+    }
+
+    // Generar lista de números aleatorios
+    private static double[] generarLista() {
         double[] lista = new double[999];
         Random random = new Random();
+
         for (int i = 0; i < lista.length; i++) {
-            lista[i] = random.nextDouble() * 2000; //numeros aleatorios entre 0 y 2000
+            lista[i] = random.nextDouble() * 2000;
         }
+
         return lista;
     }
 
-    //Metodo para imprimir lista
-    public static void imprimirLista(double[] lista) {
-        for (double elemento : lista) {
-            System.out.println(elemento + " ");
-        }
-        System.out.println();
-    }
-
-    //Metodo para ordenar lista por el metodo burbuja
-    public static void ordenarBurbuja(double[] lista) {
-        int n = lista.length;
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
+    // Ordenar por el método de la burbuja
+    private static void ordenarBurbuja(double[] lista) {
+        for (int i = 0; i < lista.length - 1; i++) {
+            for (int j = 0; j < lista.length - i - 1; j++) {
                 if (lista[j] > lista[j + 1]) {
-                    //Intercambiar elementos si estan desordenados
                     double temp = lista[j];
                     lista[j] = lista[j + 1];
                     lista[j + 1] = temp;
@@ -51,180 +92,85 @@ public class problema68 {
         }
     }
 
-    //Ordenacion por el metodo Shell
-    public static void ordenarShell(double[] lista) {
+    // Ordenar por el método Shell
+    private static void ordenarShell(double[] lista) {
         int n = lista.length;
-        for (int brecha = n / 2; brecha > 0; brecha /= 2){
-            for (int i = brecha; i < n; i++){
+        for (int gap = n / 2; gap > 0; gap /= 2) {
+            for (int i = gap; i < n; i += 1) {
                 double temp = lista[i];
                 int j;
-                for (j = i; j >= brecha && temp < lista[j - brecha]; j -= brecha){
-                    lista[j] = lista[j - brecha];
+                for (j = i; j >= gap && lista[j - gap] > temp; j -= gap) {
+                    lista[j] = lista[j - gap];
                 }
                 lista[j] = temp;
             }
         }
     }
 
-    //Ordenacion por el metodo Radixsort
-    public static void ordenarRadixsort(double[] lista) {
-        //Convertir la lista de double a int para usar Radixsort
-        int[] listaInt = new int[lista.length];
-        for (int i = 0; i < lista.length; i++) {
-            listaInt[i] = (int) lista[i];
-        }
-
-        //Encontrar el número máximo 
-        int max = Arrays.stream(listaInt).max().getAsInt();
-        int dig = contarDigitos(max);
-
-        //Aplicamos Radixsort
-        for (int digito = 1; digito <= dig; digito++){
-            listaInt = contarSort(listaInt, digito);
-        }
-
-        //Convertir la lista de int a double para mostrar en pantalla
-        for (int i = 0; i < lista.length; i++) {
-            lista[i] = listaInt[i];
-        }
-    }
-
-    //Metodo para contar el número de digitos en un número
-    public static int contarDigitos(int numero) {
-        int cont = 0;
-        while (numero != 0) {
-            numero /= 10;
-            cont++;
-        }
-        return cont;
-    }
-
-    public static int[] contarSort(int[] lista, int digito) {
+    // Ordenar por el método Radixsort
+    private static void ordenarRadixSort(double[] lista) {
         int n = lista.length;
-        int[] salida = new int[n];
-        int[] contador = new int[10];
+        double max = Arrays.stream(lista).max().getAsDouble();
 
-        Arrays.fill(contador, 0);
+        for (int exp = 1; max / exp > 0; exp *= 10) {
+            countingSort(lista, n, exp);
+        }
+    }
+
+    private static void countingSort(double[] lista, int n, int exp) {
+        double output[] = new double[n];
+        int count[] = new int[10];
+        Arrays.fill(count, 0);
 
         for (int i = 0; i < n; i++) {
-            contador[(lista[i] / digito) % 10]++;
+            count[(int) (lista[i] / exp) % 10]++;
         }
 
         for (int i = 1; i < 10; i++) {
-            contador[i] += contador[i - 1];
+            count[i] += count[i - 1];
         }
 
-        for (int i = n -1; i >= 0; i--){
-            salida[contador[(lista[i] / digito) % 10] - 1] = lista[i];
-            contador[(lista[i] / digito) % 10]--;
+        for (int i = n - 1; i >= 0; i--) {
+            output[count[(int) (lista[i] / exp) % 10] - 1] = lista[i];
+            count[(int) (lista[i] / exp) % 10]--;
         }
 
-        for (int i = 0; i < n; i++){
-            lista[i] = salida[i];
+        for (int i = 0; i < n; i++) {
+            lista[i] = output[i];
         }
-        return lista;
     }
 
-    //Metodo para busqueda binaria
-    public static int busquedaBinaria(double[] lista, double x) {
-        int izq = 0;
-        int der = lista.length - 1;
+    // Buscar un número x en la lista utilizando búsqueda binaria
+    private static void buscarNumero(double[] lista) {
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Ingrese el número a buscar en la lista: ");
+            double numeroBuscar = scanner.nextDouble();
 
-        while (izq <= der) {
-            int medio = izq + (der - izq) / 2;
-            if (lista[medio] == x) {
-                return medio; //Elemento encontrado
-            } else if (lista[medio] < x) {
-                izq = medio + 1;
+            Arrays.sort(lista); // Asegurarse de que la lista está ordenada para la búsqueda binaria
+
+            long startTimeBusqueda = System.currentTimeMillis();
+            int resultado = binarySearch(lista, numeroBuscar);
+            long endTimeBusqueda = System.currentTimeMillis();
+            long tiempoBusqueda = endTimeBusqueda - startTimeBusqueda;
+
+            if (resultado >= 0) {
+                System.out.println("El número " + numeroBuscar + " está en la lista en la posición " + resultado + ".");
             } else {
-                der = medio - 1;
-            }
-        }
-        return -1; //Elemento no encontrado
-    }
-
-    //Metodo para ordenar lista inversamente
-    public static void ordenarInversamente(double[] lista) {
-        int izq = 0;
-        int der = lista.length - 1;
-
-        while (izq < der) {
-            double temp = lista[izq];
-            lista[izq] = lista[der];
-            lista[der] = temp;
-            
-            izq++;
-            der--;
-        
-        }
-    }
-
-    public static void main(String[] args) {
-        //Generar lista de 999 numeros reales aleatorios en el rango de 0 a 2000
-        double[] lista = generarLista();
-
-        //Imprimir lista original
-        System.out.println("Lista Original: ");
-        imprimirLista(lista);
-
-        //Copiar la lista originar para usar en los calculo de tiempo
-        double[] listaCopia = Arrays.copyOf(lista, lista.length);
-
-        //Medir timepo de ordenacion por el metodo burbuja
-        long inicioBurbuja = System.nanoTime();
-        ordenarBurbuja(listaCopia);
-        long finBurbuja = System.nanoTime();
-        long tiempoBurbuja = finBurbuja - inicioBurbuja;
-
-        //Medir tiempo de ordenacion por el método Shell
-        listaCopia = Arrays.copyOf(lista, lista.length); //Restauracion de lista
-        long inicioShell = System.nanoTime();
-        ordenarShell(listaCopia);
-        long finShell = System.nanoTime();
-        long tiempoShell = finShell - inicioShell;
-
-        //Pedir un numero a buscar en la lista (Busqueda Binaria)
-        try (Scanner sc = new Scanner(System.in)){
-            System.out.println("Ingresa el número a buscar: ");
-            double x = sc.nextDouble();
-
-            //Medir tiempo de busqueda binaria
-            listaCopia = Arrays.copyOf(lista, lista.length); //Restauracion de lista
-            long tiempoInicioBusqueda = System.nanoTime();
-            int indice = busquedaBinaria(listaCopia, x);
-            long tiempoFinBusqueda = System.nanoTime();
-            long tiempoBusqueda = tiempoFinBusqueda - tiempoInicioBusqueda;
-
-            //Imprimir lista binaria
-            if (indice != -1) {
-                System.out.println("El número " + x + " fue encontrado en la posicion " + indice);
-            } else {
-                System.out.println("El numero: " + x + " no fue encontrado en la lista");
+                System.out.println("El número " + numeroBuscar + " no está en la lista.");
             }
 
-            //Medir tiempo de ordenacion de lista ya ordenada
-            Arrays.sort(listaCopia);
-            long timepoInicioOrdenada = System.nanoTime();
-            Arrays.sort(listaCopia);
-            long timepoFinOrdenada = System.nanoTime();
-            long tiempoOrdenada = timepoFinOrdenada - timepoInicioOrdenada;
-
-            //Medir tiempo de ordenacion de lista ordenada en orden inverso
-            listaCopia = Arrays.copyOf(lista, lista.length); //Restauracion de lista
-            Arrays.sort(listaCopia);
-            ordenarInversamente(listaCopia);
-            long timepoInicioOrdenInverso = System.nanoTime();
-            Arrays.sort(listaCopia);
-            long timepoFinOrdenInverso = System.nanoTime();
-            long tiempoOrdenInverso = timepoFinOrdenInverso - timepoInicioOrdenInverso;
-
-            //Imprimir resultados de tiempos
-            System.out.println("\nTiempos: ");
-            System.out.println("t1. Tiempo de ordenacion de burbuja: " + tiempoBurbuja + "nanosegundos");
-            System.out.println("t2. Tiempo de ordenacion de lista ya ordenada: " + tiempoOrdenada + "nanosegundos");
-            System.out.println("t3. Tiempo de ordenacion de lista ordenada en orden inverso: " + tiempoOrdenInverso + "nanosegundos");
-            System.out.println("t4. Tiempo de busqueda binaria: " + tiempoBusqueda + "nanosegundos");
+            System.out.println("Tiempo empleado en la búsqueda binaria: " + tiempoBusqueda + " milisegundos");
         }
-        System.out.println("t5. Tiempo de ordenacion de shell: " + tiempoShell + "nanosegundos");    
+    }
+
+    private static int binarySearch(double[] arr, double x) {
+        int low = 0, high = arr.length - 1;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (arr[mid] == x) return mid;
+            if (arr[mid] < x) low = mid + 1;
+            else high = mid - 1;
+        }
+        return -1;
     }
 }
