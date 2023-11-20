@@ -5,7 +5,7 @@ elementos se han ordenado utilizando un algoritmo de inserción.
 
 
 
-public class Ejercicio64 {
+public class ejercicio64 {
     public static void main(String[] args) {
         int[] arr = {3, 13, 8, 25, 45, 23, 98, 58};
         insertionSort(arr);
