@@ -1,35 +1,34 @@
 // Importamos las clases necesarias para manejar listas y comparadores
 import java.util.*;
-
-// Definimos la clase Racional
-class Racional {
-    // Declaramos los campos numerador y denominador como privados para mantener la encapsulación
-    private int numerador, denominador;
-
-    // Constructor por defecto que inicializa un número racional como 0/1
-    public Racional() {
-        numerador = 0;
-        denominador = 1;
-    }
-
-    // Constructor con parámetros que permite crear un número racional con un numerador y denominador específicos
-    public Racional(int n, int d) throws Exception {
-        super();
-        numerador = n;
-        // Comprobamos que el denominador no sea 0 para evitar una división por cero
-        if (d == 0)
-            throw new Exception("Denominador == 0");
-        denominador = d;
-    }
-
-    // Método para calcular el valor real del número racional, es decir, la división del numerador entre el denominador
-    public double valorReal() {
-        return (double) numerador / denominador;
-    }
-}
-
 // Clase principal donde se ejecuta el programa
 public class ordenacionseleccion {
+    // Definimos la clase Racional
+    static class Racional {
+        // Declaramos los campos numerador y denominador como privados para mantener la encapsulación
+        private int numerador, denominador;
+
+        // Constructor por defecto que inicializa un número racional como 0/1
+        public Racional() {
+            numerador = 0;
+            denominador = 1;
+        }
+
+        // Constructor con parámetros que permite crear un número racional con un numerador y denominador específicos
+        public Racional(int n, int d) throws Exception {
+            super();
+            numerador = n;
+            // Comprobamos que el denominador no sea 0 para evitar una división por cero
+            if (d == 0)
+                throw new Exception("Denominador == 0");
+            denominador = d;
+        }
+
+        // Método para calcular el valor real del número racional, es decir, la división del numerador entre el denominador
+        public double valorReal() {
+            return (double) numerador / denominador;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         // Creamos una lista de objetos Racional
         List<Racional> lista = new ArrayList<>();
